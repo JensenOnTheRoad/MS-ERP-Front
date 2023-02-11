@@ -1,30 +1,52 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
   <router-view/>
 </template>
+
+
+<script setup>
+// vue-router
+import router from '/src/router';
+
+import {watch} from 'vue';
+import {useStore} from 'vuex';
+
+const $store = useStore();
+const loginStatus = $store.state.loginStatus;
+if (loginStatus == '0' || typeof loginStatus === 'undefined') {
+  router.push({
+    // 对应的是路由配置的名称
+    name: 'login',
+  });
+}
+watch(
+    () => $store.state.loginStatus,
+    (newValue, old) => {
+      console.log(newValue, old);
+      if (newValue == '0' || typeof newValue === 'undefined') {
+        router.push({
+          // 对应的是路由配置的名称
+          name: 'login',
+        });
+      }
+    }
+);
+</script>
 
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+
+  // text-align: center;
   color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
+a {
+  text-decoration: none;
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.router-link-active {
+  text-decoraction: none;
 }
 </style>

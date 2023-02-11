@@ -1,0 +1,80 @@
+[
+  {
+    "name": "生产管理",
+    "sub": [
+      {
+        "name": "物资管理",
+        "index": "/material"
+      },
+      {
+        "name": "采购管理",
+        "index": "/purchase"
+      },
+      {
+        "name": "生产管理",
+        "index": "/production"
+      }
+    ]
+  },
+  {
+    "name": "仓库管理",
+    "sub": [
+      {
+        "name": "仓库管理",
+        "index": "/warehouse"
+      },
+      {
+        "name": "出入库记录",
+        "index": "/storage_record"
+      }
+    ]
+  },
+  {
+    "name": "商品管理",
+    "sub": [
+      {
+        "name": "商品管理",
+        "index": "/commodity"
+      }
+    ]
+  },
+  {
+    "name": "订单管理",
+    "sub": [
+      {
+        "name": "订单管理",
+        "index": "/order"
+      },
+      {
+        "name": "客户管理",
+        "index": "/customer"
+      }
+    ]
+  },
+  {
+    "name": "人事管理",
+    "sub": [
+      {
+        "name": "人事管理",
+        "index": "/user/"
+      },
+      {
+        "name": "部门管理",
+        "index": "/department"
+      }
+    ]
+  },
+  {
+    "name": "财务管理",
+    "sub": [
+      {
+        "name": "财务流水记录",
+        "index": "/financial"
+      },
+      {
+        "name": "流水类型管理",
+        "index": "/type_io"
+      }
+    ]
+  }
+]

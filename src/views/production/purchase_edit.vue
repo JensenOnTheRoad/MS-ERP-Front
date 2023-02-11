@@ -1,0 +1,204 @@
+<template>
+  <el-form
+      ref="formRef"
+      :model="dynamicValidateForm.domains"
+      :rules="rules"
+      label-width="100px"
+      :inline="true"
+  >
+    <el-form-item label="选择仓库" prop="id">
+      <el-select
+          v-model="seletedData.warehouseId"
+          filterable
+          placeholder="Select"
+      >
+        <el-option
+            v-for="item_option in data.options_warehouse"
+            :key="item_option.name"
+            :value="item_option.id"
+            :label="item_option.name"
+        />
+      </el-select>
+    </el-form-item>
+
+    <div v-for="(item, index) in dynamicValidateForm.domains">
+      <el-form-item label="选择物品" prop="id">
+        <el-select v-model="item.id" filterable placeholder="Select">
+          <el-option
+              v-for="item_option in data.options"
+              :key="item_option.name"
+              :value="item_option.id"
+              :label="
+              item_option.name +
+              ' ' +
+              item_option.price +
+              '/' +
+              item_option.specification
+            "
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="数量" prop="number">
+        <el-input-number v-model="item.number" :step="1" :min="1"/>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="danger" @click.prevent="removeRow(index)"
+        >删除
+        </el-button
+        >
+      </el-form-item>
+    </div>
+    <div>
+      <el-button @click.prevent="addRow()">添加</el-button>
+      <el-button @click="onSubmit()">提交</el-button>
+    </div>
+  </el-form>
+</template>
+
+<script setup>
+import {reactive, ref} from 'vue';
+// vuex
+import store from '/src/store';
+// axios
+import axios from 'axios';
+
+import {ElMessage} from 'element-plus';
+
+// 获取全局变量
+const global_url = ref(store.state.global_url).value;
+const url = global_url + '/production/material/getAll';
+const url_post = global_url + '/production/purchase-main/insert';
+const url_warehouse_option = global_url + '/warehouse/warehouse/getAll';
+
+const currentUser = store.state.currentUser;
+
+// 表单元素
+const formRef = ref(null);
+// 表单规则
+const rules = reactive({
+  id: [
+    {
+      // required: true,
+      type: 'number',
+      message: '不能为空',
+      trigger: 'blur',
+    },
+  ],
+  number: [
+    {
+      // required: true,
+      type: 'number',
+      message: '不能为空',
+      trigger: 'blur',
+    },
+  ],
+});
+
+// select 数据
+const data = reactive({
+  options: [],
+});
+const seletedData = reactive({
+  warehouseId: '',
+});
+
+const dynamicValidateForm = reactive({
+  domains: [
+    {
+      id: null,
+      number: 1,
+    },
+  ],
+});
+
+// 拉取后端数据
+const getTableList = () => {
+  axios
+      .get(url)
+      .then(function (response) {
+        data.options = response.data;
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+};
+const getWarehouseOptionData = () => {
+  axios
+      .get(url_warehouse_option)
+      .then(function (response) {
+        data.options_warehouse = response.data;
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+};
+getWarehouseOptionData();
+getTableList();
+
+// 添加一行
+const addRow = () => {
+  dynamicValidateForm.domains.push({
+    id: null,
+    number: 1,
+  });
+};
+// 删除一行
+const removeRow = (index) => {
+  if (index >= 1) dynamicValidateForm.domains.splice(index, 1);
+};
+
+// 定义Emits,用于向父组件传递消息
+const emit = defineEmits(['unVisEdit']);
+// 向通过消息子组件向父组件传递方法
+const onClose = () => {
+  emit('unVisEdit');
+};
+// 提交数据
+const onSubmit = () => {
+  clearDirtyData();
+
+  let post_data = [];
+  dynamicValidateForm.domains.forEach((element) => {
+    post_data.push({
+      id: element.id,
+      number: element.number,
+      principalId: currentUser,
+      warehouseId: seletedData.warehouseId,
+    });
+  });
+
+  axios({
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+    },
+    method: 'post',
+    url: url_post,
+    data: post_data,
+  })
+      .then(function (response) {
+        // 消息提示
+        ElMessage({
+          showClose: true,
+          message: '添加成功!',
+          type: 'success',
+          center: true,
+        });
+        // 向通过消息向父组件传递方法
+        emit('unVisEdit');
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+};
+
+const clearDirtyData = () => {
+  for (let index = 0; index < dynamicValidateForm.domains.length; index++) {
+    const element = dynamicValidateForm.domains[index];
+    if (element.id == 0 || element.id == null || element.id == undefined) {
+      dynamicValidateForm.domains.splice(index, 1);
+    }
+  }
+};
+</script>
