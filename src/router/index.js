@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
-// import Home from '/src/views/Home.vue'
+import Home from '/src/views/Home.vue'
 
 const routes = [
     {
@@ -28,7 +28,7 @@ const routes = [
     {
         path: "/home",
         name: "home",
-        component: () => import("/src/views/home.vue"),
+        component: () => Home,
     },
 
     // region material
