@@ -1,6 +1,6 @@
 import {createStore} from 'vuex'
 
-const url = "http://localhost:8990";
+const url = "http://47.122.41.214:8990";
 export default createStore({
     // 注册全局变量
     state: {
